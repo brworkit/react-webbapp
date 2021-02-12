@@ -7,6 +7,13 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <Person 
+          name="Bruno"
+          age="30"
+          job="developer"
+          experience="I'm a software developer who has developed many applications in many languages." 
+         />
+         
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
@@ -18,10 +25,7 @@ function App() {
         >
           Learn React
         </a>
-      </header>
-      
-      <Person/>
-      
+      </header>            
     </div>
   );
 }

@@ -1,7 +1,14 @@
 
-const person = () => {
+const person = (props) => {
     return (
-        <p>My name is person.</p>
+        <div>
+            <h4>My name is {props.name}</h4>
+            <p>I'm {props.age} years old</p>
+            <p>My job title is: {props.job}</p>
+            <p>Experience: {props.experience}</p>
+        </div>
+        
+        
     )
 }
 
