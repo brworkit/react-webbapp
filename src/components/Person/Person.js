@@ -6,6 +6,7 @@ const person = (props) => {
             <p>I'm {props.age} years old</p>
             <p>My job title is: {props.job}</p>
             <p>Experience: {props.experience}</p>
+            <p>{props.children}</p>
         </div>
         
         
