@@ -22,19 +22,11 @@ const App = props => {
     ]
   })
 
-
-  const buttonHandler = (newFakeName) => {
-    console.log("buttonHandler");
-
-    setPeopleListState({
-      people: [
-        { name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer." },
-        { name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother." },
-        { name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student." },
-        { name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby." },
-        { name: newFakeName, age: "00", job: "Unknown", experience: "I'm a unknown situation." }
-      ]
-    })
+  const deletePerson = (index) => {
+    console.log("deletePerson");
+    const people = peopleListState.people
+    people.splice(index, 1)
+    setPeopleListState({people: people})
   }
 
   const nameChangeHandler = (event) => {
@@ -64,12 +56,14 @@ const App = props => {
       return (
 
         <div>
-          {peopleListState.people.map(item => {            
+          {peopleListState.people.map((item, index) => {            
             return <Person
               name={item.name}
               age={item.age}
               job={item.job}
-              experience={item.experience}>
+              experience={item.experience}
+              changed={nameChangeHandler}
+              onDelete={() => deletePerson(index)}>
                 {item?.hobby}
             </Person>
           })}
@@ -92,7 +86,7 @@ const App = props => {
 
       {listPeople()}
 
-      <DefaultButton onClick={() => buttonHandler("FakeName")}>Change</DefaultButton>
+      <DefaultButton onClick={() => deletePerson(0)}>Change</DefaultButton>
 
       <DefaultButton onClick={() => toggleShowList()}>Show List</DefaultButton>
 
