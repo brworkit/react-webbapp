@@ -9,11 +9,12 @@ const App = props => {
       {name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer."},
       {name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother."},
       {name: "Bruna", age: "06", job: "Student", experience: "I'm a student."},
-      {name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby."}
+      {name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby."},
+      {name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation."}
     ]
   })
   
-  const buttonHandler = () => {
+  const buttonHandler = (newFakeName) => {
     console.log("buttonHandler");
 
     setPersonState({
@@ -21,7 +22,8 @@ const App = props => {
         {name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer."},
         {name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother."},
         {name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student."},
-        {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."}
+        {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."},
+        {name: newFakeName, age: "00", job: "Unknown", experience: "I'm a unknown situation."}
       ] 
     })
   }
@@ -34,9 +36,18 @@ const App = props => {
           job={personState.people[0].job}
           experience={personState.people[0].experience}
          >Hobby: Play Soccer
+         </Person>
+
+         <Person 
+          name={personState.people[4].name}
+          age={personState.people[4].age}
+          job={personState.people[4].job}
+          experience={personState.people[4].experience}
+         >Hobby: Unknown
          </Person>            
 
-         <button onClick={buttonHandler}>Change</button>    
+         {/* <button onClick={buttonHandler}>Change</button>     */}
+         <button onClick={() => buttonHandler("FakeName")}>Change</button>    
     </div>
   );
   
