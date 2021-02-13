@@ -28,6 +28,21 @@ const App = props => {
     })
   }
   
+  const nameChangeHandler = (event) => {
+    console.log("nameChangeHandler");
+
+    setPersonState({
+      people: [
+        {name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer."},
+        {name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother."},
+        {name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student."},
+        {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."},
+        {name: event.target.value, age: "00", job: "Unknown", experience: "I'm a unknown situation."}
+      ] 
+    })
+  }
+
+
   return (
     <div className="App">                    
         <Person 
@@ -43,6 +58,7 @@ const App = props => {
           age={personState.people[4].age}
           job={personState.people[4].job}
           experience={personState.people[4].experience}
+          changed={nameChangeHandler}
          >Hobby: Unknown
          </Person>            
 
