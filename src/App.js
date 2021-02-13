@@ -14,33 +14,30 @@ const App = props => {
 
   const [peopleListState, setPeopleListState] = useState({
     people: [
-      { name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
-      { name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
-      { name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
-      { name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
-      { name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
+      { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
+      { id: 2, name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
+      { id: 3, name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
+      { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
+      { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
     ]
   })
 
   const deletePerson = (index) => {
     console.log("deletePerson");
-    const people = peopleListState.people
+    const people = [...peopleListState.people]
     people.splice(index, 1)
-    setPeopleListState({people: people})
+    setPeopleListState({ people: people })
   }
 
-  const nameChangeHandler = (event) => {
-    console.log("nameChangeHandler");
-
-    setPeopleListState({
-      people: [
-        { name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer." },
-        { name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother." },
-        { name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student." },
-        { name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby." },
-        { name: event.target.value, age: "00", job: "Unknown", experience: "I'm a unknown situation." }
-      ]
-    })
+  const updatePersonName = (event, id) => {
+    console.log("updatePersonName");
+    const personIndex = peopleListState.people.findIndex(item => item.id === id)
+    console.log({personIndex})
+    const person = {...peopleListState.people[personIndex]}
+    person.name = event.target.value
+    const people = [...peopleListState.people]
+    people[personIndex] = person
+    setPeopleListState({people: people})    
   }
 
   const toggleShowList = () => {
@@ -54,29 +51,20 @@ const App = props => {
 
     if (showListState) {
       return (
-
         <div>
-          {peopleListState.people.map((item, index) => {            
+          {peopleListState.people.map((item, index) => {
             return <Person
+              key={item.id}
               name={item.name}
               age={item.age}
               job={item.job}
               experience={item.experience}
-              changed={nameChangeHandler}
+              changed={(event) => updatePersonName(event, item.id)}
               onDelete={() => deletePerson(index)}>
-                {item?.hobby}
+              {item?.hobby}
             </Person>
           })}
         </div>
-
-        // <div>
-        //   <Person
-        //     name={personState.people[0].name}
-        //     age={personState.people[0].age}
-        //     job={personState.people[0].job}
-        //     experience={personState.people[0].experience}
-        //   >Hobby: Play Soccer</Person>
-        // </div>
       )
     }
   }
@@ -154,8 +142,8 @@ export default App;
 //     })
 //   }
 
-//   const nameChangeHandler = (event) => {
-//     console.log("nameChangeHandler");
+//   const updatePersonName = (event) => {
+//     console.log("updatePersonName");
 
 //     setPersonState({
 //       people: [
@@ -184,7 +172,7 @@ export default App;
 //           age={personState.people[4].age}
 //           job={personState.people[4].job}
 //           experience={personState.people[4].experience}
-//           changed={nameChangeHandler}
+//           changed={updatePersonName}
 //          >Hobby: Unknown
 //          </Person>            
 
