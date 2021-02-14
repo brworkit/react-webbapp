@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import './App.css';
 
-import Person from '../components/Persons/Person/Person'
+import Persons from '../components/Persons/Persons'
 import DefaultButton from '../components/DefaultButton/DefaultButton'
 
 
@@ -50,21 +50,35 @@ const App = props => {
     if (showListState) {
       return (
         <div>
-          {peopleListState.people.map((item, index) => {
-            return <Person
-              key={item.id}
-              name={item.name}
-              age={item.age}
-              job={item.job}
-              experience={item.experience}
-              changed={(event) => updatePersonName(event, item.id)}
-              onDelete={() => deletePerson(index)}>
-              {item?.hobby}
-            </Person>
-          })}
+          <Persons 
+            people={peopleListState.people}
+            changed={updatePersonName}
+            onDelete={deletePerson}
+           />             
         </div>
       )
     }
+
+    // if (showListState) {
+    //   return (
+    //     <div>
+    //       {peopleListState.people.map((item, index) => {
+    //         return <Person
+    //           key={item.id}
+    //           name={item.name}
+    //           age={item.age}
+    //           job={item.job}
+    //           experience={item.experience}
+    //           changed={(event) => updatePersonName(event, item.id)}
+    //           onDelete={() => deletePerson(index)}>
+    //           {item?.hobby}
+    //         </Person>
+    //       })
+    //     }
+    //     </div>
+    //   )
+    // }
+
   }
 
   return (
