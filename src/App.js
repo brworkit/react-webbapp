@@ -48,7 +48,6 @@ const App = props => {
 
   const listPeople = () => {
 
-
     if (showListState) {
       return (
         <div>
