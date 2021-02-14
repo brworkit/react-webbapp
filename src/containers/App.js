@@ -1,11 +1,9 @@
 import { useState } from 'react';
 
-import logo from './logo.svg';
-
 import './App.css';
 
-import Person from './components/Person/Person'
-import DefaultButton from './components/DefaultButton/DefaultButton'
+import Person from '../components/Persons/Person/Person'
+import DefaultButton from '../components/DefaultButton/DefaultButton'
 
 
 const App = props => {
