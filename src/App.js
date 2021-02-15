@@ -71,11 +71,13 @@ const App = props => {
   return (
     <div className="App">
 
-      {listPeople()}
+      {/* {listPeople()}
 
       <DefaultButton onClick={() => deletePerson(0)}>Change</DefaultButton>
 
-      <DefaultButton onClick={() => toggleShowList()}>Show List</DefaultButton>
+      <DefaultButton onClick={() => toggleShowList()}>Show List</DefaultButton> */}
+
+      
 
     </div>
   );
