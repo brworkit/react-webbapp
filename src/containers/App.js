@@ -5,6 +5,8 @@ import './App.css';
 import Persons from '../components/Persons/Persons'
 import DefaultButton from '../components/DefaultButton/DefaultButton'
 
+import Cockpit from '../components/Cockpit/Cockpit'
+
 const App = props => {
 
   const [showListState, setShowListState] = useState(false)
@@ -63,7 +65,7 @@ const App = props => {
 
       {listPeople()}
       
-      <DefaultButton onClick={toggleShowList}>Show List</DefaultButton>
+      <Cockpit toggleShowList={toggleShowList}/>
 
     </div>
   );
@@ -71,6 +73,25 @@ const App = props => {
 }
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // import { useState } from 'react';
 
