@@ -7,6 +7,7 @@ import './App.css';
 import Person from './components/Person/Person'
 import DefaultButton from './components/DefaultButton/DefaultButton'
 
+import Square from "./components/Geometry/Square/Square"
 
 const App = props => {
 
@@ -77,7 +78,7 @@ const App = props => {
 
       <DefaultButton onClick={() => toggleShowList()}>Show List</DefaultButton> */}
 
-      
+      <Square />
 
     </div>
   );
