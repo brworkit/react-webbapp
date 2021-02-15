@@ -1,78 +1,155 @@
-import { useState } from 'react';
+import React, { Component } from 'react';
 
 import './App.css';
 
 import Persons from '../components/Persons/Persons'
-import DefaultButton from '../components/DefaultButton/DefaultButton'
 
 import Cockpit from '../components/Cockpit/Cockpit'
 
-const App = props => {
+class App extends Component {
 
-  const [showListState, setShowListState] = useState(false)
-
-  const [peopleListState, setPeopleListState] = useState({
+  state = {
     people: [
       { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
       { id: 2, name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
       { id: 3, name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
       { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
-    ]
-  })
+    ],
+    showListState: false
+  }
 
-  const deletePerson = (index) => {
+  deletePerson = (index) => {
     console.log("deletePerson");
-    const people = [...peopleListState.people]
+    const people = [...this.state.people]
     people.splice(index, 1)
-    setPeopleListState({ people: people })
+    
+    this.setState({
+      people: people
+    })
   }
 
-  const updatePersonName = (event, id) => {
+  updatePersonName = (event, id) => {
     console.log("updatePersonName");
-    const personIndex = peopleListState.people.findIndex(item => item.id === id)
-    console.log({personIndex})
-    const person = {...peopleListState.people[personIndex]}
+    const personIndex = this.state.people.findIndex(item => item.id === id)
+    console.log({ personIndex })
+    const person = { ...this.state.people[personIndex] }
     person.name = event.target.value
-    const people = [...peopleListState.people]
+    const people = [...this.state.people]
     people[personIndex] = person
-    setPeopleListState({people: people})    
+
+    this.setState({
+      people: people
+    })
+
   }
 
-  const toggleShowList = () => {
+  toggleShowList = () => {
     console.log("toggleShowList");
-    const doesShow = showListState
-    setShowListState(!doesShow)
+    const doesShow = this.state.showListState
+    this.setState({
+      showListState: !doesShow
+    })    
   }
 
-  const listPeople = () => {
-
-    if (showListState) {
+  listPeople = () => {
+    if (this.state.showListState) {
       return (
         <div>
-          <Persons 
-            people={peopleListState.people}
-            update={updatePersonName}
-            delete={deletePerson}
-           />             
+          <Persons
+            people={this.state.people}
+            update={this.updatePersonName}
+            delete={this.deletePerson}
+          />
         </div>
       )
     }
   }
 
-  return (
-    <div className="App">
+  render() {
+    return (
+      <div className="App">
 
-      {listPeople()}
-      
-      <Cockpit toggleShowList={toggleShowList}/>
+        {this.listPeople()}
 
-    </div>
-  );
+        <Cockpit toggleShowList={this.toggleShowList} />
+
+      </div>
+    );
+  }
 
 }
 
 export default App;
+
+
+
+// const App = props => {
+
+//   const [showListState, setShowListState] = useState(false)
+
+//   const [peopleListState, setPeopleListState] = useState({
+//     people: [
+//       { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
+//       { id: 2, name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
+//       { id: 3, name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
+//       { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
+//       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
+//     ]
+//   })
+
+//   const deletePerson = (index) => {
+//     console.log("deletePerson");
+//     const people = [...peopleListState.people]
+//     people.splice(index, 1)
+//     setPeopleListState({ people: people })
+//   }
+
+//   const updatePersonName = (event, id) => {
+//     console.log("updatePersonName");
+//     const personIndex = peopleListState.people.findIndex(item => item.id === id)
+//     console.log({personIndex})
+//     const person = {...peopleListState.people[personIndex]}
+//     person.name = event.target.value
+//     const people = [...peopleListState.people]
+//     people[personIndex] = person
+//     setPeopleListState({people: people})    
+//   }
+
+//   const toggleShowList = () => {
+//     console.log("toggleShowList");
+//     const doesShow = showListState
+//     setShowListState(!doesShow)
+//   }
+
+//   const listPeople = () => {
+
+//     if (showListState) {
+//       return (
+//         <div>
+//           <Persons 
+//             people={peopleListState.people}
+//             update={updatePersonName}
+//             delete={deletePerson}
+//            />             
+//         </div>
+//       )
+//     }
+//   }
+
+//   return (
+//     <div className="App">
+
+//       {listPeople()}
+
+//       <Cockpit toggleShowList={toggleShowList}/>
+
+//     </div>
+//   );
+
+// }
+
+// export default App;
 
 
 
@@ -242,7 +319,7 @@ export default App;
 //       </Rectangle>
 
 //       <Rectangle backgroundColor="cyan" width="100%" height="200px">        
-          
+
 //       </Rectangle>
 
 //       <Circle backgroundColor="yellow" side="75px" right="20px" bottom="10%" float="right" position="absolute">                  
