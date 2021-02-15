@@ -10,9 +10,9 @@ const person = (props) => {
             <p>I'm {props.age} years old</p>
             <p>My job title is: {props.job}</p>
             <p>Experience: {props.experience}</p>
-            <p>{props.children}</p>
-            <input type="text" onChange={props.changed}></input>
-            <button onClick={props.onDelete}>Delete</button>            
+            <div>{props.children}</div>
+            <input type="text" onChange={props.update}></input>
+            <button onClick={props.delete}>Delete</button>            
         </div>        
     )
 }

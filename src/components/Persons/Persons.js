@@ -7,8 +7,8 @@ const persons = props => props.people.map((item, index) => {
         age={item.age}
         job={item.job}
         experience={item.experience}
-        changed={(event) => props.updatePersonName(event, item.id)}
-        onDelete={() => props.deletePerson(index)}>
+        update={(event) => props.update(event, item.id)}
+        delete={() => props.delete(index)}>
         {item?.hobby}
     </Person>
 })

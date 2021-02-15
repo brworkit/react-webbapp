@@ -1,17 +1,17 @@
-import './Square.css';
+import './Rectangle.css';
 
-const shape = (props) => {
+const shape = (props) => {    
     return (
-        <div className="Square" style={{ 
+        <div className="Rectangle" style={{ 
             backgroundColor: props?.backgroundColor,
-            width: props?.side,
-            height: props?.side,
+            width: props?.width,
+            height: props?.height,
             left: props?.left,
             top: props?.top,
             right: props?.right,
             bottom: props?.bottom,
             float: props?.float,
-            position: props?.position            
+            position: props?.position
          }}>
              {props.children}
         </div>

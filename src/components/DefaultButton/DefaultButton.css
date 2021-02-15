@@ -1,4 +1,9 @@
 .DefaultButton {
-    
+    border: 1px solid blue;
+    padding: 16px;
+    background-color: green;
+    font: inherit;
+    color: white;
+    cursor: pointer;
 }
 
