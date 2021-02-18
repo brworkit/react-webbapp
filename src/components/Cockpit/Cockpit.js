@@ -1,11 +1,21 @@
+import React, { useEffect } from 'react'
+
 import DefaultButton from '../DefaultButton/DefaultButton'
 
-const cockpit = props => {
-    return (
-        // {listPeople()}      
+const Cockpit = props => {
+
+    useEffect(() => {
+        console.log("useEffect");
+
+        return () => {
+            console.log("useEffect clean up");
+        }
+    }, [])
+
+    return (              
         <DefaultButton onClick={props.toggleShowList}>Show List</DefaultButton>
     )
 }
 
 
-export default cockpit;
+export default Cockpit;
