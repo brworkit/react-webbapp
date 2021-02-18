@@ -8,6 +8,11 @@ import Cockpit from '../components/Cockpit/Cockpit'
 
 class App extends Component {
 
+  constructor(props) {
+    super(props)
+    console.log("constructor")    
+  }
+
   state = {
     people: [
       { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
@@ -17,6 +22,42 @@ class App extends Component {
       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
     ],
     showListState: false
+  }
+
+
+  static getDerivedStateFromProps(props, state) {
+    console.log("getDerivedStateFromProps")    
+    console.log({props})
+    return state
+  }
+
+  componentWillUnmount() {
+    console.log("componentWillUnmount")
+  }
+
+  componentDidMount() {
+    console.log("componentDidMount")
+
+  }
+
+  componentDidCatch() {
+    console.log("componentDidCatch")
+
+  }
+
+  componentDidUpdate() {
+    console.log("componentDidUpdate")
+
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log("shouldComponentUpdate")
+    return true
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    console.log("getSnapshotBeforeUpdate")
+    return null
   }
 
   deletePerson = (index) => {

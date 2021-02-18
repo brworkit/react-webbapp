@@ -1,20 +1,48 @@
 
+import React, { Component } from 'react'
+
 import './Person.css'
 
-// import DeleteIcon from '@material-ui/icons/Delete';
+class Person extends Component {
 
-const person = (props) => {
-    return (
-        <div className="Person">
-            <h4>My name is {props.name}</h4>
-            <p>I'm {props.age} years old</p>
-            <p>My job title is: {props.job}</p>
-            <p>Experience: {props.experience}</p>
-            <div>{props.children}</div>
-            <input type="text" onChange={props.update}></input>
-            <button onClick={props.delete}>Delete</button>            
-        </div>        
-    )
+    componentDidMount() {
+        console.log("componentDidMount")
+
+    }
+
+    componentDidCatch() {
+        console.log("componentDidCatch")
+
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log("shouldComponentUpdate")
+        return true
+    }
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        console.log("getSnapshotBeforeUpdate")
+        return { message: "PERSON SNAPSHOT" };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("componentDidUpdate")
+        console.log({ snapshot })
+    }
+
+    render() {
+        return (
+            <div className="Person">
+                <h4>My name is {this.props.name}</h4>
+                <p>I'm {this.props.age} years old</p>
+                <p>My job title is: {this.props.job}</p>
+                <p>Experience: {this.props.experience}</p>
+                <div>{this.props.children}</div>
+                <input type="text" onChange={this.props.update}></input>
+                <button onClick={this.props.delete}>Delete</button>
+            </div>
+        )
+    }
 }
 
-export default person;
+export default Person;
