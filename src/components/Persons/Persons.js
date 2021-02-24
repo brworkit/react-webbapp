@@ -1,8 +1,8 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 
 import Person from "./Person/Person";
 
-class Persons extends Component {
+class Persons extends PureComponent {
 
     componentDidMount() {
         console.log("componentDidMount")
@@ -14,10 +14,14 @@ class Persons extends Component {
 
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        console.log("shouldComponentUpdate")
-        return true
-    }
+    // DO NOT NEED THIS WHEN USING: PureComponent
+    // shouldComponentUpdate(nextProps, nextState) {
+    //     console.log("shouldComponentUpdate")
+    //     if(nextProps.people !== this.props.people) {
+    //         return true
+    //     }
+    //     return false
+    // }
 
     getSnapshotBeforeUpdate(prevProps, prevState) {
         console.log("getSnapshotBeforeUpdate")

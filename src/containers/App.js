@@ -110,10 +110,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+    
+        <Cockpit toggleShowList={this.toggleShowList} />
 
         {this.listPeople()}
-
-        <Cockpit toggleShowList={this.toggleShowList} />
 
       </div>
     );
