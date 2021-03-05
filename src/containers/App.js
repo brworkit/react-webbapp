@@ -8,6 +8,8 @@ import Input from '../components/UI/Input/Input'
 import Button from '../components/UI/Button/Button'
 import Spinner from '../components/UI/Spinner/Spinner'
 
+import LoginForm from '../forms/login-form'
+
 import axios from '../api';
 
 import Cockpit from '../components/Cockpit/Cockpit'
@@ -30,100 +32,18 @@ class App extends Component {
       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
     ],
     showListState: false,
-    orderForm: {
-      name: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Your Name'
-        },
-        value: '',
-        validation: {
-          required: true
-        },
-        valid: false,
-        touched: false
-      },
-      street: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Street'
-        },
-        value: '',
-        validation: {
-          required: true
-        },
-        valid: false,
-        touched: false
-      },
-      zipCode: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'ZIP Code'
-        },
-        value: '',
-        validation: {
-          required: true,
-          minLength: 5,
-          maxLength: 5,
-          isNumeric: true
-        },
-        valid: false,
-        touched: false
-      },
-      country: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'text',
-          placeholder: 'Country'
-        },
-        value: '',
-        validation: {
-          required: true
-        },
-        valid: false,
-        touched: false
-      },
-      email: {
-        elementType: 'input',
-        elementConfig: {
-          type: 'email',
-          placeholder: 'Your E-Mail'
-        },
-        value: '',
-        validation: {
-          required: true,
-          isEmail: true
-        },
-        valid: false,
-        touched: false
-      },
-      deliveryMethod: {
-        elementType: 'select',
-        elementConfig: {
-          options: [
-            { value: 'fastest', displayValue: 'Fastest' },
-            { value: 'cheapest', displayValue: 'Cheapest' }
-          ]
-        },
-        value: '',
-        validation: {},
-        valid: true
-      }
-    },
+    loginForm: LoginForm,
     formIsValid: false,
     loading: false
   }
 
 
-  orderHandler = (event) => {
+  loginHandler = (event) => {
     event.preventDefault();
     this.setState({ loading: true });
     const formData = {};
-    for (let formElementIdentifier in this.state.orderForm) {
-      formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+    for (let formElementIdentifier in this.state.loginForm) {
+      formData[formElementIdentifier] = this.state.loginForm[formElementIdentifier].value;
     }
     const order = {
       ingredients: this.props.ingredients,
@@ -173,7 +93,7 @@ class App extends Component {
 
   inputChangedHandler = (event, inputIdentifier) => {
     const updatedOrderForm = {
-      ...this.state.orderForm
+      ...this.state.loginForm
     };
     const updatedFormElement = {
       ...updatedOrderForm[inputIdentifier]
@@ -187,7 +107,7 @@ class App extends Component {
     for (let inputIdentifier in updatedOrderForm) {
       formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
     }
-    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+    this.setState({ loginForm: updatedOrderForm, formIsValid: formIsValid });
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -275,14 +195,16 @@ class App extends Component {
   render() {
 
     const formElementsArray = [];
-    for (let key in this.state.orderForm) {
+
+    for (let key in this.state.loginForm) {
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key]
+        config: this.state.loginForm[key]
       });
     }
+
     let form = (
-      <form onSubmit={this.orderHandler}>
+      <form onSubmit={this.loginHandler}>
         {formElementsArray.map(formElement => (
           <Input
             key={formElement.id}
@@ -294,22 +216,20 @@ class App extends Component {
             touched={formElement.config.touched}
             changed={(event) => this.inputChangedHandler(event, formElement.id)} />
         ))}
-        <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
+        <Button btnType="Success" disabled={!this.state.formIsValid}>LOGIN</Button>
       </form>
     );
+
     if (this.state.loading) {
       form = <Spinner />;
     }
 
     return (
       <div className="App">
-
         {form}
-        {/* <Input>
-        </Input> */}
+        
         {/* <Cockpit toggleShowList={this.toggleShowList} />
         {this.listPeople()} */}
-
       </div>
     );
   }
