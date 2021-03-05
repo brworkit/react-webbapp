@@ -4,13 +4,21 @@ import './App.css';
 
 import Persons from '../components/Persons/Persons'
 
+import Input from '../components/UI/Input/Input'
+import Button from '../components/UI/Button/Button'
+import Spinner from '../components/UI/Spinner/Spinner'
+
+import axios from '../api';
+
 import Cockpit from '../components/Cockpit/Cockpit'
+
+import AuthContext from "../context/auth-context"
 
 class App extends Component {
 
   constructor(props) {
     super(props)
-    console.log("constructor")    
+    console.log("constructor")
   }
 
   state = {
@@ -21,13 +29,170 @@ class App extends Component {
       { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
     ],
-    showListState: false
+    showListState: false,
+    orderForm: {
+      name: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Your Name'
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      street: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Street'
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      zipCode: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'ZIP Code'
+        },
+        value: '',
+        validation: {
+          required: true,
+          minLength: 5,
+          maxLength: 5,
+          isNumeric: true
+        },
+        valid: false,
+        touched: false
+      },
+      country: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'text',
+          placeholder: 'Country'
+        },
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
+      },
+      email: {
+        elementType: 'input',
+        elementConfig: {
+          type: 'email',
+          placeholder: 'Your E-Mail'
+        },
+        value: '',
+        validation: {
+          required: true,
+          isEmail: true
+        },
+        valid: false,
+        touched: false
+      },
+      deliveryMethod: {
+        elementType: 'select',
+        elementConfig: {
+          options: [
+            { value: 'fastest', displayValue: 'Fastest' },
+            { value: 'cheapest', displayValue: 'Cheapest' }
+          ]
+        },
+        value: '',
+        validation: {},
+        valid: true
+      }
+    },
+    formIsValid: false,
+    loading: false
   }
 
 
+  orderHandler = (event) => {
+    event.preventDefault();
+    this.setState({ loading: true });
+    const formData = {};
+    for (let formElementIdentifier in this.state.orderForm) {
+      formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+    }
+    const order = {
+      ingredients: this.props.ingredients,
+      price: this.props.price,
+      orderData: formData
+    }
+    axios.post('/orders.json', order)
+      .then(response => {
+        this.setState({ loading: false });
+        this.props.history.push('/');
+      })
+      .catch(error => {
+        this.setState({ loading: false });
+      });
+  }
+
+  checkValidity(value, rules) {
+    let isValid = true;
+    if (!rules) {
+      return true;
+    }
+
+    if (rules.required) {
+      isValid = value.trim() !== '' && isValid;
+    }
+
+    if (rules.minLength) {
+      isValid = value.length >= rules.minLength && isValid
+    }
+
+    if (rules.maxLength) {
+      isValid = value.length <= rules.maxLength && isValid
+    }
+
+    if (rules.isEmail) {
+      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      isValid = pattern.test(value) && isValid
+    }
+
+    if (rules.isNumeric) {
+      const pattern = /^\d+$/;
+      isValid = pattern.test(value) && isValid
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (event, inputIdentifier) => {
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    };
+    const updatedFormElement = {
+      ...updatedOrderForm[inputIdentifier]
+    };
+    updatedFormElement.value = event.target.value;
+    updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+    updatedFormElement.touched = true;
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+
+    let formIsValid = true;
+    for (let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+    }
+    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
+  }
+
   static getDerivedStateFromProps(props, state) {
-    console.log("getDerivedStateFromProps")    
-    console.log({props})
+    console.log("getDerivedStateFromProps")
+    console.log({ props })
     return state
   }
 
@@ -64,7 +229,7 @@ class App extends Component {
     console.log("deletePerson");
     const people = [...this.state.people]
     people.splice(index, 1)
-    
+
     this.setState({
       people: people
     })
@@ -90,7 +255,7 @@ class App extends Component {
     const doesShow = this.state.showListState
     this.setState({
       showListState: !doesShow
-    })    
+    })
   }
 
   listPeople = () => {
@@ -108,12 +273,42 @@ class App extends Component {
   }
 
   render() {
+
+    const formElementsArray = [];
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    }
+    let form = (
+      <form onSubmit={this.orderHandler}>
+        {formElementsArray.map(formElement => (
+          <Input
+            key={formElement.id}
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+            invalid={!formElement.config.valid}
+            shouldValidate={formElement.config.validation}
+            touched={formElement.config.touched}
+            changed={(event) => this.inputChangedHandler(event, formElement.id)} />
+        ))}
+        <Button btnType="Success" disabled={!this.state.formIsValid}>ORDER</Button>
+      </form>
+    );
+    if (this.state.loading) {
+      form = <Spinner />;
+    }
+
     return (
       <div className="App">
-    
-        <Cockpit toggleShowList={this.toggleShowList} />
 
-        {this.listPeople()}
+        {form}
+        {/* <Input>
+        </Input> */}
+        {/* <Cockpit toggleShowList={this.toggleShowList} />
+        {this.listPeople()} */}
 
       </div>
     );
@@ -122,417 +317,4 @@ class App extends Component {
 }
 
 export default App;
-
-
-
-// const App = props => {
-
-//   const [showListState, setShowListState] = useState(false)
-
-//   const [peopleListState, setPeopleListState] = useState({
-//     people: [
-//       { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
-//       { id: 2, name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
-//       { id: 3, name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
-//       { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
-//       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
-//     ]
-//   })
-
-//   const deletePerson = (index) => {
-//     console.log("deletePerson");
-//     const people = [...peopleListState.people]
-//     people.splice(index, 1)
-//     setPeopleListState({ people: people })
-//   }
-
-//   const updatePersonName = (event, id) => {
-//     console.log("updatePersonName");
-//     const personIndex = peopleListState.people.findIndex(item => item.id === id)
-//     console.log({personIndex})
-//     const person = {...peopleListState.people[personIndex]}
-//     person.name = event.target.value
-//     const people = [...peopleListState.people]
-//     people[personIndex] = person
-//     setPeopleListState({people: people})    
-//   }
-
-//   const toggleShowList = () => {
-//     console.log("toggleShowList");
-//     const doesShow = showListState
-//     setShowListState(!doesShow)
-//   }
-
-//   const listPeople = () => {
-
-//     if (showListState) {
-//       return (
-//         <div>
-//           <Persons 
-//             people={peopleListState.people}
-//             update={updatePersonName}
-//             delete={deletePerson}
-//            />             
-//         </div>
-//       )
-//     }
-//   }
-
-//   return (
-//     <div className="App">
-
-//       {listPeople()}
-
-//       <Cockpit toggleShowList={toggleShowList}/>
-
-//     </div>
-//   );
-
-// }
-
-// export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useState } from 'react';
-
-// import './App.css';
-
-// import Persons from '../components/Persons/Persons'
-// import DefaultButton from '../components/DefaultButton/DefaultButton'
-
-// import Square from "../components/Geometry/Square/Square"
-// import Rectangle from "../components/Geometry/Rectangle/Rectangle"
-// import Circle from "../components/Geometry/Circle/Circle"
-
-
-// import { Container, Row, Col } from 'react-grid-system';
-
-
-// const App = props => {
-
-//   const [showListState, setShowListState] = useState(false)
-
-//   const [peopleListState, setPeopleListState] = useState({
-//     people: [
-//       { id: 1, name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer." },
-//       { id: 2, name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother." },
-//       { id: 3, name: "Bruna", age: "06", job: "Student", experience: "I'm a student." },
-//       { id: 4, name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby." },
-//       { id: 5, name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation.", hobby: "But I have a hobby." }
-//     ]
-//   })
-
-//   const deletePerson = (index) => {
-//     console.log("deletePerson");
-//     const people = [...peopleListState.people]
-//     people.splice(index, 1)
-//     setPeopleListState({ people: people })
-//   }
-
-//   const updatePersonName = (event, id) => {
-//     console.log("updatePersonName");
-//     const personIndex = peopleListState.people.findIndex(item => item.id === id)
-//     console.log({personIndex})
-//     const person = {...peopleListState.people[personIndex]}
-//     person.name = event.target.value
-//     const people = [...peopleListState.people]
-//     people[personIndex] = person
-//     setPeopleListState({people: people})    
-//   }
-
-//   const toggleShowList = () => {
-//     console.log("toggleShowList");
-//     const doesShow = showListState
-//     setShowListState(!doesShow)
-//   }
-
-//   const listPeople = () => {
-
-//     if (showListState) {
-//       return (
-//         <div>
-//           <Persons 
-//             people={peopleListState.people}
-//             changed={updatePersonName}
-//             onDelete={deletePerson}
-//            />             
-//         </div>
-//       )
-//     }
-//   }
-
-//   return (
-//     <div className="App">
-
-
-//       {/* <div style={{flex: 1, flexDirection: 'column'}}>
-//         <div style={{width: 50, height: 50, backgroundColor: 'powderblue'}} />
-//         <div style={{width: 50, height: 50, backgroundColor: 'skyblue'}} />
-//         <div style={{width: 50, height: 50, backgroundColor: 'steelblue'}} />
-//       </div> */}
-
-//       {/* {listPeople()}
-
-//       <DefaultButton onClick={() => deletePerson(0)}>Change</DefaultButton>
-
-//       <DefaultButton onClick={() => toggleShowList()}>Show List</DefaultButton> */}
-
-//       <Rectangle backgroundColor="brown" width="100%" height="200px">                  
-//           <Square backgroundColor="yellow" side="50px" left="10px" top="10%" float="left">            
-//           </Square>
-//           <Circle backgroundColor="orange" side="100px" left="50%" top="15%">              
-//           </Circle>          
-//       </Rectangle>
-
-//       <Rectangle backgroundColor="gray" width="100%" height="500px">        
-//           {/* <Grid backgroundColor="yellow" side="200px" left="47%" top="20%">            
-
-//           </Grid> */}
-
-//           {/* <Grid container spacing={1}>
-//             <Grid container item xs={12} spacing={3}>
-//               <FormRow />
-//             </Grid>
-//             <Grid container item xs={12} spacing={3}>
-//               <FormRow />
-//             </Grid>
-//             <Grid container item xs={12} spacing={3}>
-//               <FormRow />
-//             </Grid>
-//           </Grid> */}
-
-//           <Container>
-//             <Row>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//             </Row>
-
-//             <Row>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//             </Row>
-
-//             <Row>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//               <Col sm={4}>
-//                 One of three columns
-//               </Col>
-//             </Row>
-//           </Container>
-
-//       </Rectangle>
-
-//       <Rectangle backgroundColor="cyan" width="100%" height="200px">        
-
-//       </Rectangle>
-
-//       <Circle backgroundColor="yellow" side="75px" right="20px" bottom="10%" float="right" position="absolute">                  
-//       </Circle>
-
-//       {/* <Square backgroundColor="brown" left="200px" side="400px"/>
-
-//       <Square backgroundColor="orange" /> */}
-
-//     </div>
-//   );
-
-// }
-
-// export default App;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { useState } from 'react';
-
-// import logo from './logo.svg';
-
-// import './App.css';
-
-// import Person from './components/Person/Person'
-// import DefaultButton from './components/DefaultButton/DefaultButton'
-
-
-// const App = props => {
-
-//   const [personState, setPersonState] = useState({
-//     people: [
-//       {name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer."},
-//       {name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother."},
-//       {name: "Bruna", age: "06", job: "Student", experience: "I'm a student."},
-//       {name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby."},
-//       {name: "Fulano", age: "00", job: "Unknown", experience: "I'm a unknown situation."}
-//     ],
-//     donwload: false
-//   })
-
-//   const buttonHandler = (newFakeName) => {
-//     console.log("buttonHandler");
-
-//     setPersonState({
-//       people: [
-//         {name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer."},
-//         {name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother."},
-//         {name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student."},
-//         {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."},
-//         {name: newFakeName, age: "00", job: "Unknown", experience: "I'm a unknown situation."}
-//       ] 
-//     })
-//   }
-
-//   const updatePersonName = (event) => {
-//     console.log("updatePersonName");
-
-//     setPersonState({
-//       people: [
-//         {name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer."},
-//         {name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother."},
-//         {name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student."},
-//         {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."},
-//         {name: event.target.value, age: "00", job: "Unknown", experience: "I'm a unknown situation."}
-//       ] 
-//     })
-//   }
-
-
-//   return (
-//     <div className="App">                    
-//         <Person 
-//           name={personState.people[0].name}
-//           age={personState.people[0].age}
-//           job={personState.people[0].job}
-//           experience={personState.people[0].experience}
-//          >Hobby: Play Soccer
-//          </Person>
-
-//          <Person 
-//           name={personState.people[4].name}
-//           age={personState.people[4].age}
-//           job={personState.people[4].job}
-//           experience={personState.people[4].experience}
-//           changed={updatePersonName}
-//          >Hobby: Unknown
-//          </Person>            
-
-//         <DefaultButton onClick={() => buttonHandler("FakeName")}>Change</DefaultButton>
-
-//     </div>
-//   );
-
-// }
-
-// export default App;
-
-
-
-
-
-
-// import logo from './logo.svg';
-// import './App.css';
-// import Person from './components/Person/Person'
-// import { Component } from 'react';
-
-// class App extends Component {
-//   state = {
-//     people: [
-//       {name: "Bruno", age: "30", job: "Developer", experience: "I'm a software developer."},
-//       {name: "Natalia", age: "26", job: "Mother", experience: "I'm a mother."},
-//       {name: "Bruna", age: "06", job: "Student", experience: "I'm a student."},
-//       {name: "Eduardo", age: "04", job: "Baby", experience: "I'm a baby."}
-//     ]
-//   }
-
-
-//   buttonHandler = () => {
-//     console.log("buttonHandler");
-
-//     this.setState({
-//       people: [
-//         {name: "Bruno Viana", age: "30", job: "Developer", experience: "I'm a software developer."},
-//         {name: "Natalia Santos", age: "26", job: "Mother", experience: "I'm a mother."},
-//         {name: "Bruna Santos Viana", age: "06", job: "Student", experience: "I'm a student."},
-//         {name: "Eduardo Santos Viana", age: "04", job: "Baby", experience: "I'm a baby."}
-//       ] 
-//     })
-//   }
-
-//   render () {
-
-//     return (
-//       <div className="App">                    
-//           <Person 
-//             name={this.state.people[0].name}
-//             age={this.state.people[0].age}
-//             job={this.state.people[0].job}
-//             experience={this.state.people[0].experience}
-//            >Hobby: Play Soccer
-//            </Person>            
-
-//            <button onClick={this.buttonHandler}>Change</button>    
-//       </div>
-//     );
-
-//   }
-
-// }
-
-// export default App;
-
-
-
 
